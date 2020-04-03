@@ -14,6 +14,12 @@ Back in college I got really interested in fractals and didn't took me long enou
 
 ## The Rules used in this project
 
+Parent A
+![parentA](parentA.png)
+
+Parent B
+![parentB](parentB.png)
+
 Since I cannot create my own rules, I took the rules I used to create the tree and a rule to create a leaf and decided to cross them, as you'd do with a plant if you wanna make a new specie. So, every time you click / touch the screen, a new fractal emerge from that crossing.
 
 

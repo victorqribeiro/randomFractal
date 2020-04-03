@@ -22,7 +22,7 @@ let parentB = [
 	0.421,0.257,-0.353,0.306,0,0.7,0.16
 ]
 
-const zoom = 100
+let zoom = 100
 
 let rules, sum, x, y
 
