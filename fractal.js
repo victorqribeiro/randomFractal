@@ -122,3 +122,12 @@ $('#evolve').onclick = e => {
 	previewParents()
 	selected = {}
 }
+
+$('#save').onclick = e => {
+	const URL = window.URL || window.webkitURL
+	let blob = new Blob([JSON.stringify(parents)], {type: 'text/json'})
+	let link = document.createElement('a')
+	link.href = URL.createObjectURL(blob)
+	link.download = 'fractals.json'
+	link.click()
+}
