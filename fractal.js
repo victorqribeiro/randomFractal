@@ -27,10 +27,10 @@ const parents = [
 
 const createCanvasContext = (w,h,event = true) => {
 	const canvas = document.createElement("canvas")
-	canvas.id = id++
 	canvas.width = w
 	canvas.height = h
 	if(event){
+		canvas.id = id++
 		canvas.onclick = () => { 
 			if( canvas.id in selected ){
 				delete selected[canvas.id]
