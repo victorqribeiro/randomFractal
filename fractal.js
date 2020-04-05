@@ -3,6 +3,28 @@ const $ = _ => document.querySelector(_)
 
 let id = 0, selected = {}
 
+const population = Array(9)
+
+const keys = ['a', 'b', 'c', 'd', 'tx', 'ty', 'w']
+
+const parents = [
+	[
+		0.85,0.04,-0.04,0.85,0,1.6,0.85,
+		-0.15,0.28,0.26,0.24,0,0.44,0.07,
+		0.2,-0.26,0.23,0.22,0,1.6,0.07,
+		0,0,0,0.16,0,0,0.01
+	],
+	[
+		0.05,0,0,0.6,0,0,0.17,
+		0.05,0,0,-0.5,0,1,0.17,
+		0.46,-0.321,0.386,0.383,0,0.6,0.17,
+		0.47,-0.154,0.171,0.423,0,1.1,0.17,
+		0.433,0.275,-0.25,0.476,0,1,0.16,            	
+		0.421,0.257,-0.353,0.306,0,0.7,0.16
+	]
+]
+
+
 const createCanvasContext = (w,h,event = true) => {
 	const canvas = document.createElement("canvas")
 	canvas.id = id++
@@ -23,25 +45,6 @@ const createCanvasContext = (w,h,event = true) => {
 	c.translate(w/2, h)
 	return c
 }
-
-const keys = ['a', 'b', 'c', 'd', 'tx', 'ty', 'w']
-
-const parents = [
-	[
-	0.85,0.04,-0.04,0.85,0,1.6,0.85,
-	-0.15,0.28,0.26,0.24,0,0.44,0.07,
-	0.2,-0.26,0.23,0.22,0,1.6,0.07,
-	0,0,0,0.16,0,0,0.01
-	],
-	[
-	0.05,0,0,0.6,0,0,0.17,
-	0.05,0,0,-0.5,0,1,0.17,
-	0.46,-0.321,0.386,0.383,0,0.6,0.17,
-	0.47,-0.154,0.171,0.423,0,1.1,0.17,
-	0.433,0.275,-0.25,0.476,0,1,0.16,            	
-	0.421,0.257,-0.353,0.306,0,0.7,0.16
-	]
-]
 
 const crossover = (a,b) => {
 	const child = Array( Math.random() > 0.5 ? a.length : b.length ).fill(0)
@@ -89,37 +92,38 @@ const getRule = sum => {
   let rand = Math.random() * sum;
   for(let i = 0; i < rules.length; i++){
     let rule = rules[i]
-    if(rand < rule.w){
+    if(rand < rule.w)
       return rule
-    }
     rand -= rule.w
   }
 }
 
-const previewParents = () => {
-	for(i = 0; i < parents.length; i++){
-		const rules = arrayToRule( parents[i] )
-		const c = createCanvasContext((innerWidth*0.7)/3*0.5,(innerHeight*0.98)/3*0.5,false)
-		iterate(500,rules,c,10)
-		$('#parents').appendChild(c.canvas)
-	}
+
+for(i = 0; i < parents.length; i++){
+	const rules = arrayToRule( parents[i] )
+	const c = createCanvasContext((innerWidth*0.7)/3*0.5,(innerHeight*0.98)/3*0.5,false)
+	iterate(500,rules,c,10)
+	$('#parents').appendChild(c.canvas)
 }
 
-const population = Array(9)
 for(let i = 0; i < 9; i++)
 	population[i] = refresh()
 
-previewParents()
-
 $('#evolve').onclick = e => {
-	for(s of Object.keys(selected))
-		parents.push( population[s] )
+	selected = Object.keys(selected)
+	if(selected){
+		for(s of selected){
+			parents.push( population[s] )
+			const rules = arrayToRule( population[s] )
+			const c = createCanvasContext((innerWidth*0.7)/3*0.5,(innerHeight*0.98)/3*0.5,false)
+			iterate(500,rules,c,10)
+			$('#parents').appendChild(c.canvas)
+		}
+	}
 	$('#area').innerHTML = ""
 	id = 0
 	for(let i = 0; i < 9; i++)
 		population[i] = refresh()
-	$('#parents').innerHTML = ""
-	previewParents()
 	selected = {}
 }
 
