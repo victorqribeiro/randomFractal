@@ -69,7 +69,7 @@ const refresh = () => {
 		parentB = Math.floor(Math.random() * parents.length)
 	const child = crossover( parents[parentA], parents[parentB] )
 	rules = arrayToRule( child )
-	iterate(10000,rules,c,100)
+	iterate(10000,rules,c,60)
 	return child
 }
 
@@ -102,7 +102,7 @@ const getRule = sum => {
 for(i = 0; i < parents.length; i++){
 	const rules = arrayToRule( parents[i] )
 	const c = createCanvasContext((innerWidth*0.7)/3*0.5,(innerHeight*0.98)/3*0.5,false)
-	iterate(500,rules,c,10)
+	iterate(500,rules,c,15)
 	$('#parents').appendChild(c.canvas)
 }
 
@@ -116,7 +116,7 @@ $('#evolve').onclick = e => {
 			parents.push( population[s] )
 			const rules = arrayToRule( population[s] )
 			const c = createCanvasContext((innerWidth*0.7)/3*0.5,(innerHeight*0.98)/3*0.5,false)
-			iterate(500,rules,c,10)
+			iterate(500,rules,c,15)
 			$('#parents').appendChild(c.canvas)
 		}
 	}
