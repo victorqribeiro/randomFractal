@@ -26,4 +26,6 @@ Since I cannot create my own rules, I took the rules I used to create the tree a
 
 This project has taken an expected turn and I'll update the README later. For now, here's how its working:
 
-Left you can 9 fractals generated from the crossing of the two parents on the left. You can click to select / deselect a fractal you like. When you click evolve, the fractal(s) you selected will become a parent for the next generation, having a chance of being selected to the next crossing.
+On the left you have 9 fractals generated from the crossing of the two parents on the left. You can click to select / deselect a fractal you like. When you click evolve, the fractal(s) you selected will become a parent for the next generation, having a chance of being selected to the next crossing.
+
+I have pushed a feature where you can view, adjust the zoom and the resolution of the selected fractals, learn more about it [here](https://youtu.be/DY5Me5hiQOc)
