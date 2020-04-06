@@ -1,7 +1,9 @@
 
 const $ = _ => document.querySelector(_)
 
-let id = 0, selected = {}
+const $c = _ => document.createElement(_)
+
+let id = 0, previewID = 0, selected = {}
 
 const population = Array(9)
 
@@ -24,12 +26,11 @@ const parents = [
 	]
 ]
 
-
-const createCanvasContext = (w,h,event = true) => {
-	const canvas = document.createElement("canvas")
+const createCanvasContext = (w,h,population = true) => {
+	const canvas = $c("canvas")
 	canvas.width = w
 	canvas.height = h
-	if(event){
+	if(population){
 		canvas.id = id++
 		canvas.onclick = () => { 
 			if( canvas.id in selected ){
@@ -40,6 +41,9 @@ const createCanvasContext = (w,h,event = true) => {
 				canvas.style.border = "solid 2px red"
 			}
 		}
+	}else{
+		canvas.id = previewID++
+		canvas.onclick = () => showPreview(canvas.id)
 	}
 	const c = canvas.getContext("2d")
 	c.translate(w/2, h)
@@ -73,7 +77,7 @@ const refresh = () => {
 	return child
 }
 
-const iterate = (points, rules,c,zoom) => {
+const iterate = (points, rules, c, zoom) => {
 	let sum = 0
 	for(let i = 0; i < rules.length; i++)
 		sum += rules[i].w
@@ -81,7 +85,7 @@ const iterate = (points, rules,c,zoom) => {
 	let y = Math.random()
 	c.clearRect(-c.canvas.width/2,-c.canvas.height,c.canvas.width,c.canvas.height)
   for(let i = 0; i < points; i++){
-    let rule = getRule(sum)
+    const rule = getRule(sum)
     x = x * rule.a + y * rule.b + rule.tx
     y = x * rule.c + y * rule.d + rule.ty
     c.fillRect(x * zoom, -y * zoom, 1, 1)
@@ -91,20 +95,68 @@ const iterate = (points, rules,c,zoom) => {
 const getRule = sum => {
   let rand = Math.random() * sum;
   for(let i = 0; i < rules.length; i++){
-    let rule = rules[i]
+    const rule = rules[i]
     if(rand < rule.w)
       return rule
     rand -= rule.w
   }
 }
 
-
-for(i = 0; i < parents.length; i++){
-	const rules = arrayToRule( parents[i] )
+const createPreview = arr => {
+	const rules = arrayToRule( arr )
 	const c = createCanvasContext((innerWidth*0.7)/3*0.5,(innerHeight*0.98)/3*0.5,false)
 	iterate(500,rules,c,15)
-	$('#parents').appendChild(c.canvas)
+	return c
 }
+
+const showPreview = id => {
+	const canvas = $c('canvas')
+	canvas.width = innerWidth * 0.8
+	canvas.height = innerHeight * 0.8
+	const ctx = canvas.getContext('2d')
+	ctx.translate(canvas.width/2, canvas.height)
+	const rules = arrayToRule(parents[id])
+	
+	const bg = $c('div')
+	bg.id = "bg"
+	const window = $c('div')
+	window.id = "window"
+	const toolbar = $c('div')
+	toolbar.id = "toolbar"
+	const close = $c('button')
+	close.innerText = "close"
+	close.onclick = () => bg.remove()
+	const zoom = $c('input')
+	zoom.type = "number"
+	zoom.value = 100
+	const zoomLabel = $c('label')
+	zoomLabel.innerText = "zoom:"
+	const points = $c('input')
+	points.type = "number"
+	points.value = "100000"
+	const pointsLabel = $c('label')
+	pointsLabel.innerText = "points:"
+	const render = $c('button')
+	render.innerText = "render"
+	render.onclick = () => {
+		ctx.clearRect( -canvas.width/2, -canvas.height, canvas.width, canvas.height )
+		iterate( points.value, rules, ctx, zoom.value )
+	}
+	toolbar.appendChild( pointsLabel )
+	toolbar.appendChild( points )
+	toolbar.appendChild( zoomLabel )
+	toolbar.appendChild( zoom )
+	toolbar.appendChild( render )
+	toolbar.appendChild( close )
+	window.appendChild( toolbar )
+	window.appendChild( canvas )
+	iterate( 10000, rules, ctx, 100)
+	bg.appendChild( window )
+	document.body.appendChild( bg )
+}
+
+for(i = 0; i < parents.length; i++)
+	$('#parents').appendChild(createPreview(parents[i]).canvas)
 
 for(let i = 0; i < 9; i++)
 	population[i] = refresh()
@@ -114,10 +166,7 @@ $('#evolve').onclick = e => {
 	if(selected){
 		for(s of selected){
 			parents.push( population[s] )
-			const rules = arrayToRule( population[s] )
-			const c = createCanvasContext((innerWidth*0.7)/3*0.5,(innerHeight*0.98)/3*0.5,false)
-			iterate(500,rules,c,15)
-			$('#parents').appendChild(c.canvas)
+			$('#parents').appendChild(createPreview(population[s]).canvas)
 		}
 	}
 	$('#area').innerHTML = ""
