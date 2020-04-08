@@ -1,8 +1,8 @@
-# Random Fractal
+# Crossing Fractals 
 
-...or the secret behind my tree.
+Crossing fractal using principles from genetic algorithm.
 
-![screenshot](screenshot.png)
+![screenshot](tutorial.gif)
 
 [live version](https://victorribeiro.com/randomFractal)
 
