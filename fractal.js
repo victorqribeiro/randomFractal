@@ -3,6 +3,8 @@ const $ = _ => document.querySelector(_)
 
 const $c = _ => document.createElement(_)
 
+const URL = window.URL || window.webkitURL
+
 let id = 0, previewID = 0, selected = {}
 
 const population = Array(9)
@@ -23,6 +25,12 @@ const parents = [
 		0.47,-0.154,0.171,0.423,0,1.1,0.17,
 		0.433,0.275,-0.25,0.476,0,1,0.16,            	
 		0.421,0.257,-0.353,0.306,0,0.7,0.16
+	],
+	[
+		0.1400,0.0100,0.0000,0.5100,-0.0800,-1.3100,0.1,
+		0.4300,0.5200,-0.4500,0.5000,1.4900,-0.7500,0.15,
+		0.4500,-0.4900,0.4700,0.4700,-1.6200,-0.7400,0.15,
+		0.4900,0.0000,0.0000,0.5100,0.0200,1.6200,0.6
 	]
 ]
 
@@ -142,11 +150,32 @@ const showPreview = id => {
 		ctx.clearRect( -canvas.width/2, -canvas.height, canvas.width, canvas.height )
 		iterate( points.value, rules, ctx, zoom.value )
 	}
+	const png = $c('button')
+	png.innerText = "PNG"
+	png.onclick = () => {
+		canvas.toBlob( blob => {
+			const link = document.createElement('a')
+			link.href = URL.createObjectURL(blob)
+			link.download = 'fractal.png'
+			link.click()
+		})
+	}
+	const json = $c('button')
+	json.innerText = "JSON"
+	json.onclick = () => {
+		let blob = new Blob([JSON.stringify(rules)], {type: 'text/json'})
+		let link = $c('a')
+		link.href = URL.createObjectURL(blob)
+		link.download = 'fractal.json'
+		link.click()
+	}
 	toolbar.appendChild( pointsLabel )
 	toolbar.appendChild( points )
 	toolbar.appendChild( zoomLabel )
 	toolbar.appendChild( zoom )
 	toolbar.appendChild( render )
+	toolbar.appendChild( png )
+	toolbar.appendChild( json )
 	toolbar.appendChild( close )
 	window.appendChild( toolbar )
 	window.appendChild( canvas )
@@ -177,7 +206,6 @@ $('#evolve').onclick = e => {
 }
 
 $('#save').onclick = e => {
-	const URL = window.URL || window.webkitURL
 	let blob = new Blob([JSON.stringify(parents)], {type: 'text/json'})
 	let link = document.createElement('a')
 	link.href = URL.createObjectURL(blob)
